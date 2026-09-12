@@ -17,14 +17,16 @@ for a in "$@"; do case "$a" in
   *) echo "unknown option: $a" >&2; exit 2;; esac; done
 
 LOG=/var/log/yoonet-seat.log
-ARCH=$(dpkg --print-architecture)
 step() { printf '\n\033[1;34m==> %s\033[0m\n' "$*"; }
 ok()   { printf '\033[1;32m    ok\033[0m %s\n' "$*"; }
 have() { command -v "$1" >/dev/null 2>&1; }
 
 # ---- preflight -------------------------------------------------------------
 if [ "$(id -u)" -eq 0 ]; then echo "Run as your normal user, not root. The script uses sudo where needed." >&2; exit 1; fi
-if ! grep -qs 'ID=ubuntu' /etc/os-release; then echo "This script is for Ubuntu." >&2; exit 1; fi
+if ! grep -qs 'ID=ubuntu' /etc/os-release; then
+  echo "This script sets up an Ubuntu 24.04 seat. It does nothing on $(uname -s). Run it on one of the Ubuntu desktops, or in an Ubuntu VM." >&2; exit 1
+fi
+ARCH=$(dpkg --print-architecture)
 . /etc/os-release
 case "${VERSION_ID:-}" in 24.04|24.10|26.04) ;; *) echo "Tested on Ubuntu 24.04 LTS. You have ${VERSION_ID:-unknown}; continuing anyway." ;; esac
 cd "$HOME"   # never pick up a project .npmrc or similar from the launch directory
