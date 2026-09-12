@@ -27,6 +27,7 @@ if [ "$(id -u)" -eq 0 ]; then echo "Run as your normal user, not root. The scrip
 if ! grep -qs 'ID=ubuntu' /etc/os-release; then echo "This script is for Ubuntu." >&2; exit 1; fi
 . /etc/os-release
 case "${VERSION_ID:-}" in 24.04|24.10|26.04) ;; *) echo "Tested on Ubuntu 24.04 LTS. You have ${VERSION_ID:-unknown}; continuing anyway." ;; esac
+cd "$HOME"   # never pick up a project .npmrc or similar from the launch directory
 sudo -v
 sudo touch "$LOG"; sudo chmod 664 "$LOG"; sudo chown root:adm "$LOG"
 exec > >(tee -a "$LOG") 2>&1
@@ -97,7 +98,7 @@ step "Node.js 22 LTS"
 add_repo nodesource https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
   "deb [arch=$ARCH signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main"
 $APT update; $APT install nodejs
-sudo corepack enable 2>/dev/null || true
+sudo corepack enable >/dev/null 2>&1 || true
 ok "node $(node -v), npm $(npm -v)"
 
 step "Claude Code"
