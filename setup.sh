@@ -142,7 +142,8 @@ h "Audio"; pactl list short sinks 2>/dev/null; pactl list short sources 2>/dev/n
 h "Video devices"; v4l2-ctl --list-devices 2>/dev/null | head -20
 h "USB"; lsusb
 h "Displays"; xrandr --listmonitors 2>/dev/null || echo "(wayland: see Settings > Displays)"
-h "Tools"; for t in google-chrome code git gh node npm claude docker; do printf '%-14s %s\n' "$t" "$(command -v $t >/dev/null && ($t --version 2>/dev/null | head -1) || echo 'not installed')"; done
+export PATH="$HOME/.local/bin:$PATH"
+h "Tools"; for t in google-chrome chromium code git gh node npm claude docker; do printf '%-14s %s\n' "$t" "$(command -v $t >/dev/null && ($t --version 2>/dev/null | head -1) || echo 'not installed')"; done
 h "Updates"; apt list --upgradable 2>/dev/null | tail -n +2 | wc -l | xargs -I{} echo "{} packages upgradable"; ls -t /var/log/unattended-upgrades/*.log 2>/dev/null | head -1 | xargs -r tail -3
 h "Recent errors (last boot)"; journalctl -p err -b --no-pager -n 25 2>/dev/null
 h "Disk pressure"; du -sh ~/.cache ~/.npm ~/code 2>/dev/null
