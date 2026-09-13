@@ -1,0 +1,84 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Yoonet seat setup guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:16mm 16mm 18mm}
+body{font-family:Inter,system-ui,sans-serif;color:#181925;font-size:10.5pt;line-height:1.5;margin:0}
+h1{font-family:Manrope;font-weight:800;font-size:24pt;margin:0 0 2pt;letter-spacing:-.01em}
+h2{font-family:Manrope;font-weight:800;font-size:13pt;margin:16pt 0 6pt;padding-top:8pt;border-top:2px solid #8A9EFF}
+.sub{color:#6B7094;font-size:10pt;margin-bottom:12pt}
+.head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #8A9EFF;padding-bottom:10pt;margin-bottom:6pt}
+.head img{height:30pt}
+ol{padding-left:18pt;margin:4pt 0}li{margin:3pt 0}
+code,pre{font-family:ui-monospace,Menlo,monospace;font-size:9.5pt}
+pre{background:#EEEFF4;border-radius:6pt;padding:8pt 10pt;margin:6pt 0;white-space:pre-wrap}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14pt}
+.box{background:#e6eaff;border-radius:6pt;padding:8pt 10pt}
+.box b{font-family:Manrope}
+table{border-collapse:collapse;width:100%;font-size:9.5pt}td,th{text-align:left;padding:3pt 6pt;border-bottom:1px solid #dcdce5}th{color:#6B7094;font-weight:600;text-transform:uppercase;font-size:8pt;letter-spacing:.05em}
+.foot{color:#6B7094;font-size:8.5pt;margin-top:14pt;border-top:1px solid #dcdce5;padding-top:6pt}
+.chk li{list-style:none;margin-left:-14pt}.chk li:before{content:"\2610  ";font-size:12pt}
+</style></head><body>
+<div class="head"><div><h1>Setting up a Yoonet seat</h1><div class="sub">Ubuntu 24.04 LTS on a ThinkPad or desktop. About 40 minutes per machine, mostly waiting.</div></div><img src="../../pcx-po/public/assets/yoonet-logo.svg" alt="Yoonet"></div>
+
+<div class="grid">
+<div class="box"><b>You need</b><br>The laptop or desktop, its charger, a USB stick of 8GB or more, wired or WiFi internet, and the person's name and email for their account.</div>
+<div class="box"><b>Before wiping</b><br>Copy the person's Documents, Desktop and Downloads to Google Drive. Ask if they use anything that only runs on Windows. Windows can always be put back; the licence lives in the machine.</div>
+</div>
+
+<h2>1. Make the install stick (once, reuse it for every machine)</h2>
+<ol>
+<li>Download <b>Ubuntu 24.04 LTS Desktop</b> from <code>ubuntu.com/download/desktop</code>.</li>
+<li>On Windows: open <b>Rufus</b> (rufus.ie), pick the stick and the ISO, press Start, accept the defaults. On a Mac: run <code>tools/make-usb.sh</code> from the repo.</li>
+</ol>
+
+<h2>2. Boot from the stick</h2>
+<ol>
+<li>Plug the stick in, power on, and tap <b>F12</b> (ThinkPad) or <b>F11 / Del</b> (desktop) for the boot menu. Choose the USB entry that starts with <b>UEFI</b>.</li>
+<li>If it boots to Windows instead: enter BIOS with <b>F1</b> (ThinkPad) or <b>Del</b> (desktop), find Security, and turn <b>Secure Boot</b> off if Ubuntu refused to start. Usually it is not needed.</li>
+</ol>
+
+<h2>3. Install Ubuntu</h2>
+<ol>
+<li>Choose <b>Install Ubuntu</b>, English, your keyboard, connect to WiFi.</li>
+<li>Pick <b>Default installation</b>, and tick <b>Install third-party software</b> and <b>Download and install support for additional media formats</b>.</li>
+<li>Choose <b>Erase disk and install Ubuntu</b>. This removes Windows.</li>
+<li>Name: the person's full name. Computer name: <code>yoonet-firstname</code>. Username: their first name. Password: something they choose; they type it to install things. Leave <b>Require password to log in</b> on.</li>
+<li>Install, restart, remove the stick when asked, log in.</li>
+</ol>
+
+<h2>4. Run the seat script</h2>
+<ol>
+<li>Open a terminal with <b>Ctrl + Alt + T</b> and paste:</li>
+</ol>
+<pre>curl -fsSL https://raw.githubusercontent.com/Yoonet-PH/internal-yoonet-seat/main/setup.sh | bash</pre>
+<ol start="2">
+<li>It asks for the password once, then runs for 10 to 15 minutes and ends with a green <b>Done</b> block. If it stops early, run the same line again; it picks up where it left off.</li>
+</ol>
+
+<h2>5. Hand over to the person (they do this, at their desk)</h2>
+<pre>claude                      # sign in with the Anthropic account
+gh auth login               # GitHub, choose HTTPS and the browser
+git config --global user.name "Their Name"
+git config --global user.email their.name@yoonet.io</pre>
+<p>Then sign into Chrome with their Yoonet Google account. Gmail, Drive, Slack and Zoom all run in the browser or from the Ubuntu App Center.</p>
+
+<h2>Checklist per machine</h2>
+<ul class="chk">
+<li>Files backed up to Drive, no Windows-only tools needed</li>
+<li>Ubuntu installed, logs in, WiFi connects</li>
+<li>Seat script finished with the green Done block</li>
+<li>Headset, webcam and monitors plugged in and working (Settings, Sound and Displays)</li>
+<li>Person signed into Claude Code, GitHub, Chrome</li>
+<li><code>yoonet-doctor</code> runs and shows no errors under Recent errors</li>
+</ul>
+
+<h2>If something goes wrong</h2>
+<table><tr><th>Symptom</th><th>Do this</th></tr>
+<tr><td>Anything at all after setup</td><td>Open a terminal: <code>yoonet-doctor | claude "here is my seat report. &lt;what is wrong&gt;"</code> and follow Claude Code through the fix.</td></tr>
+<tr><td>Stick will not boot</td><td>Try the other USB port, then rebuild the stick. On a ThinkPad check Secure Boot in BIOS.</td></tr>
+<tr><td>No WiFi during install</td><td>Plug in a cable or a phone on USB tethering for the install; WiFi drivers arrive with the updates.</td></tr>
+<tr><td>Screen stays black after install</td><td>Hold the power button, boot again. If it repeats, hold Shift at boot, choose Advanced, then the recovery entry, and run the seat script from there.</td></tr>
+<tr><td>Need Windows back</td><td>Download the Windows 11 media tool on another PC, make a stick, install. The licence activates by itself.</td></tr>
+</table>
+<div class="foot">Yoonet seat guide · script and this guide live at github.com/Yoonet-PH/internal-yoonet-seat · Ubuntu 24.04 LTS is supported with security updates until 2029.</div>
+</body></html>
